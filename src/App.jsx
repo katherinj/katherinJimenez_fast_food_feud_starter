@@ -26,20 +26,31 @@ export const appInfo = {
 // or this!
 const { data, categories, restaurants } = createDataSet()
 
-export function App() {
-  const [currentCategory, setCurrentCategory] = useState()
-  const [currentRestaurant, setCurrentRestaurant] = useState()
-  const [currentItem, setCurrentItem] = useState()
 
-  const handleCategoryClick = (c) => {
-    setCurrentCategory(c)
+export function App() {
+  const [currentCategory, setCurrentCategory] = useState(null)
+  const [currentRestaurant, setCurrentRestaurant] = useState(null)
+  const [currentItem, setCurrentItem] = useState(null)
+
+
+  const test = () => {
+    console.log("Testing close click")
+    setCurrentCategory("")
   }
-  const handleRestaurantClick = (r) => {
-    setCurrentRestaurant(r)
-  }
-  const handleItemClick = (it) => {
-    setCurrentItem(it)
-  }
+  
+const displayInstructions = () => {
+    if(!currentCategory&&!currentRestaurant&&!currentItem){
+      return <Instructions instructions={appInfo.instructions.start}/>
+    }else if(currentCategory&&!currentRestaurant&&!currentItem){
+      return <Instructions instructions={appInfo.instructions.onlyCategory}/>
+    } else if(!currentCategory&&currentRestaurant&&!currentItem){
+      return <Instructions instructions={appInfo.instructions.onlyRestaurant}/>
+    } else if(currentCategory&&currentRestaurant&&!currentItem){
+      return <Instructions instructions={appInfo.instructions.noSelectedItem}/>
+    } else {
+      return <Instructions instructions={appInfo.instructions.allSelected}/>
+    }
+}
 
   let currentMenuItems = data.filter(d => d.food_category == currentCategory).filter(d => d.restaurant == currentRestaurant)
 
@@ -49,9 +60,11 @@ export function App() {
       <div className="CategoriesColumn col">
         <div className="categories options">
           <h2 className="title">Categories</h2>
-          {categories.map((category) => (
-           <Chip label={category} key={category} isActive={category == currentCategory} onChipClick={handleCategoryClick}/>
+
+          {categories.map((category, idx) => (
+           <Chip label={category} key={idx} isActive={category == currentCategory} onChipClick={() => setCurrentCategory(category)} onChipCloseClick={(e) =>{e.stopPropagation(); setCurrentCategory("")}}/>
           ))}
+        
         </div>
       </div>
 
@@ -59,31 +72,39 @@ export function App() {
       <div className="container">
 
         {/* HEADER GOES HERE */}
-        <Header header={appInfo}/>
+        <Header title={appInfo.title} tagline={appInfo.tagline} description={appInfo.description}/>
 
         {/* RESTAURANTS ROW */}
         <div className="RestaurantsRow">
           <h2 className="title">Restaurants</h2>
-          <div className="restaurants options">{restaurants.map((restaurant, idx) => (
-            <Chip label={restaurant} key={restaurant} isActive={currentRestaurant == restaurant} onChipClick={handleRestaurantClick}/>
-            ))}</div>
+          <div className="restaurants options">
+            
+            {restaurants.map((restaurant, idx) => (
+            <Chip label={restaurant} key={idx} isActive={currentRestaurant == restaurant} onChipClick={() => setCurrentRestaurant(restaurant)} onChipCloseClick={(e) =>{e.stopPropagation(); setCurrentRestaurant("")}}/>
+            ))}
+            
+            </div>
         </div>
 
         {/* INSTRUCTIONS GO HERE */}
-        <Instructions instructions={appInfo.instructions.start}/>
+        {displayInstructions()}
+
 
         {/* MENU DISPLAY */}
         <div className="MenuDisplay display">
           <div className="MenuItemButtons menu-items">
             <h2 className="title">Menu Items</h2>
             
-            {currentMenuItems.map((item) => (
-            <Chip label={item.item_name} key={item.item_name} isActive={item == currentItem} onChipClick={handleItemClick}/>))}
+            {currentMenuItems.map((item,idx) => (
+            <Chip label={item.item_name} key={idx} isActive={item == currentItem} onChipClick={() => setCurrentItem(item)} onChipCloseClick={(e) =>{e.stopPropagation();setCurrentItem("")}}/> ))}
+
           </div>
 
           {/* NUTRITION FACTS */}
-          <div className="NutritionFacts nutrition-facts">{
-            <NutritionalLabel item={currentItem}/>
+          <div className="NutritionFacts nutrition-facts"> {
+
+            currentItem ? <NutritionalLabel item={currentItem} key={currentItem.item_name}/>:null 
+          
           }</div>
         </div>
 
