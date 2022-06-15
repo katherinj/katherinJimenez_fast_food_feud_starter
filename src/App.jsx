@@ -7,6 +7,8 @@ import Instructions from "./components/Instructions/Instructions.jsx"
 import Chip from "./components/Chip/Chip.jsx"
 import NutritionalLabel from "./components/NutritionalLabel/NutritionalLabel.jsx"
 import { useState } from "react"
+import { CategoryColumn } from "./CategoryColumn"
+import DataSource from "./DataSource"
 
 
 // don't move this!
@@ -32,12 +34,6 @@ export function App() {
   const [currentRestaurant, setCurrentRestaurant] = useState(null)
   const [currentItem, setCurrentItem] = useState(null)
 
-
-  const test = () => {
-    console.log("Testing close click")
-    setCurrentCategory("")
-  }
-  
 const displayInstructions = () => {
     if(!currentCategory&&!currentRestaurant&&!currentItem){
       return <Instructions instructions={appInfo.instructions.start}/>
@@ -56,6 +52,7 @@ const displayInstructions = () => {
 
   return (
     <main className="App">
+
       {/* CATEGORIES COLUMN */}
       <div className="CategoriesColumn col">
         <div className="categories options">
@@ -67,6 +64,10 @@ const displayInstructions = () => {
         
         </div>
       </div>
+
+      {/*stretch feature*/}
+      {/* <CategoryColumn categories={categories}/> */}
+
 
       {/* MAIN COLUMN */}
       <div className="container">
@@ -86,9 +87,14 @@ const displayInstructions = () => {
             </div>
         </div>
 
+        {/*stretch feature*/}
+        {/* <RestaurantsRows restaurant={restaurant}/> */}
+
         {/* INSTRUCTIONS GO HERE */}
         {displayInstructions()}
 
+        {/*stretch feature*/}
+        {/* <Instructions /> */}
 
         {/* MENU DISPLAY */}
         <div className="MenuDisplay display">
@@ -99,6 +105,8 @@ const displayInstructions = () => {
             <Chip label={item.item_name} key={idx} isActive={item == currentItem} onChipClick={() => setCurrentItem(item)} onChipCloseClick={(e) =>{e.stopPropagation();setCurrentItem("")}}/> ))}
 
           </div>
+          {/*stretch feature*/}
+          {/* <MenuDisplay /> */}
 
           {/* NUTRITION FACTS */}
           <div className="NutritionFacts nutrition-facts"> {
@@ -108,9 +116,7 @@ const displayInstructions = () => {
           }</div>
         </div>
 
-        <div className="data-sources">
-          <p>{appInfo.dataSource}</p>
-        </div>
+         <DataSource dataSource={appInfo.dataSource}/> 
       </div>
     </main>
   )
